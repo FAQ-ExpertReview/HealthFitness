@@ -1,0 +1,36 @@
+name: pages build and deployment
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        run: |
+          mkdir -p public
+          cp -r ./*.html ./public/ 2>/dev/null || true
+          cp -r sitemap.xml ./public/ 2>/dev/null || true
+        shell: bash
+
+      - name: Upload to Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./public
+
+      - name: Deploy
+        uses: actions/deploy-pages@v1
